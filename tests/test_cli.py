@@ -759,16 +759,15 @@ source.reservations.managed=no,source.reservations.source.type=unix,source.reser
 --console pty,target_type=virtio
 
 
---hostdev net_00_1c_25_10_b1_e4,boot_order=4,rom_bar=off,acpi.nodeset=0,2
+--hostdev net_00_1c_25_10_b1_e4,boot_order=4,rom_bar=off
 --host-device usb_device_781_5151_2004453082054CA1BEEE
 --host-device 001.003
 --hostdev 15:0.1
 --host-device 2:15:0.2
 --hostdev 0:15:0.3,address.type=pci,address.zpci.uid=0xffff,address.zpci.fid=0xffffffff
---hostdev 0:15:0.4,driver_name=vfio,driver.iommufd=yes
 --host-device 0x062a:0x0001,driver_name=vfio
 --host-device 0483:2016
---host-device pci_8086_2829_scsi_host_scsi_device_lun0,rom.bar=on,acpi.nodeset=0-2
+--host-device pci_8086_2829_scsi_host_scsi_device_lun0,rom.bar=on
 --hostdev usb_5_20 --hostdev usb_5_21
 --hostdev wlan0,type=net
 --hostdev /dev/vdz,type=storage
@@ -880,6 +879,22 @@ source.reservations.managed=no,source.reservations.source.type=unix,source.reser
 """,
     "many-devices",
     predefine_check="8.4.0",
+)
+
+c.add_compare(
+    """
+--hostdev 0:15:0.4,driver_name=vfio,driver.iommufd=yes
+    """,
+    "iommufd",
+    prerun_check="12.1.0",
+)
+
+c.add_compare(
+    """
+--hostdev 0:15:0.4,acpi.nodeset=0,2
+    """,
+    "acpi-nodeset",
+    prerun_check="11.8.0",
 )
 
 # Need to extract from the many-devices test as it was fixed in libvirt 10.4.0
@@ -1054,6 +1069,20 @@ c.add_compare(
     "funny-passwords",
 )
 
+
+#################
+# Nested Smmuv3 #
+#################
+c = vinst.add_category(
+    "kvm-aarch64-nested-smmuv3",
+    "--disk none --noautoconsole --osinfo generic --connect %(URI-KVM-AARCH64)s",
+)
+
+c.add_compare(
+    "--controller type=pci,index=1,model=pcie-expander-bus --controller type=pci,index=2,model=pcie-root-port,address.domain=0,address.bus=1,address.devno=0,address.function=0,address.type=pci --iommu model=smmuv3,driver.pciBus=0,driver.accel=on,driver.ats=on,driver.ril=on,driver.ssidsize=20,driver.oas=48 --iommu model=smmuv3,driver.pciBus=1,driver.accel=on,driver.ats=on,driver.ril=on,driver.ssidsize=20,driver.oas=48 --hostdev 0:0:4.0,type=pci,address.bus=2,address.devno=0,address.function=0,address.type=pci",
+    "aarch64-nested-smmuv3",
+    prerun_check="12.7.0",
+)
 
 ########################
 # Storage provisioning #

@@ -895,7 +895,6 @@
         <address domain="0" bus="0" slot="25" function="0"/>
       </source>
       <rom bar="off"/>
-      <acpi nodeset="0,2"/>
       <boot order="4"/>
     </hostdev>
     <hostdev mode="subsystem" type="usb" managed="yes">
@@ -928,12 +927,6 @@
         <zpci uid="0xffff" fid="0xffffffff"/>
       </address>
     </hostdev>
-    <hostdev mode="subsystem" type="pci" managed="yes">
-      <source>
-        <address domain="0" bus="21" slot="0" function="4"/>
-      </source>
-      <driver name="vfio" iommufd="yes"/>
-    </hostdev>
     <hostdev mode="subsystem" type="usb" managed="yes">
       <source>
         <vendor id="0x062a"/>
@@ -953,7 +946,6 @@
         <address bus="0" target="0" unit="0"/>
       </source>
       <rom bar="on"/>
-      <acpi nodeset="0-2"/>
     </hostdev>
     <hostdev mode="subsystem" type="usb" managed="yes">
       <source>
